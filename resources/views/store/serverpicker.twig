@@ -1,0 +1,30 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ '/store/' in current_path() ? 'store'|lang: 'Admin' }} - {{ 'choose_a_server'|lang }}{% endblock %}
+
+{% block contentnoapp %}
+  <div class="d-flex flex-fill">
+    <div class="container align-self-center">
+      <div class="justify-content-center">
+        <div class="text-center">
+          <h1 class="title">{{ block('title') }}</h1>
+        </div>
+        <br><br><br>
+        <div class="row justify-content-center">
+          {% for server in servers %}
+            <div class="col-auto" data-aos="fade-up">
+              <div class="card hoverscale text-center" style="width: 18rem;">
+                <img class="card-img-top" src="{{ server.imageURL }}">
+                <div class="card-body">
+                  <h2 class="mb-4">{{ server.name }}</h2>
+                  <a href="packages/{{ server.id }}" class="btn btn-lg btn-block btn-outline-custom">{{ '/store/' in current_path() ? 'browse_packages'|lang: 'Configure packages' }}</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+{% endblock %}

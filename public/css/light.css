@@ -1,0 +1,70 @@
+:root {
+  --primary: #fd746c;
+  --theme-gradient: linear-gradient(to right, #fd746c, #ff9068);
+}
+
+.page-header, .bg-primary, .badge-primary, .dropdown-item:active, .page-item.active .page-link, .nav-pills .nav-link.active, .btn-outline-custom:hover {
+  background: var(--theme-gradient);
+}
+
+.page-header {
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+}
+
+.alternatebg:nth-child(2) {
+  clip-path: polygon(0 0, 100% 87px, 100% 100%, 0 100%);
+  padding-top: 8vh;
+  margin-top: -11.5vh;
+}
+
+a, .page-link, .board-icon {
+  color: var(--primary);
+}
+a:hover, .page-link:hover {
+  color: #ff9068;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(253, 116, 108,.5);
+}
+
+.page-item.active .page-link, .btn-outline-custom, .btn-outline-custom:hover {
+  border-color: #dee2e6;
+}
+
+.progress-bar {
+  background-color: var(--primary);
+}
+
+.card, .breadcrumb, .discord-widget, .dropdown-menu {
+  box-shadow: 0px 15px 40px rgba(50,50,50,.12), 0px 5px 15px rgba(0,0,0,.08);
+  border: none;
+}
+
+.table {
+  box-shadow: 0px 15px 40px rgba(50,50,50,.07), 0px 5px 15px rgba(0,0,0,.04);
+}
+
+.breadcrumb {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.page-item .page-link, .page-item span {
+  border-radius: 50% !important;
+  height: 35px;
+  width: 35px;
+  margin: 0 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.pretty input:checked~.state.p-primary label:after, .pretty.p-toggle .state.p-primary label:after {
+  background-color: var(--primary) !important;
+}
+
+.discord-logo {
+  filter: invert(100%);
+}

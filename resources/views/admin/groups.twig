@@ -1,0 +1,78 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Groups{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form v-for="(card, index) in cards" onsubmit="submitForm(this); return false;" :action="save_url" method="post" class="col-10 offset-1 offset-md-0 col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Group {{card.id}}<i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="type" value="group">
+            <input type="hidden" name="gid" :value="card.id">
+            <input type="hidden" name="order" :value="index+1">
+            <div class="form-group col-12 text-center">
+              <h6 class="title mb-0" :style="`color: `+card.color">
+                <i :class="card.icon+` mr-1`"></i>
+                {{ card.name }}
+              </h6>
+            </div>
+            <div class="form-group col-12">
+              <label for="name"><i class="fas fa-pen mr-1"></i>Name</label>
+              <input required maxlength="50" type="text" class="form-control" id="name" name="name" v-model="card.name">
+            </div>
+            <div class="form-group col-12">
+              <label for="ingame_equivalent"><i class="fas fa-users-cog mr-1"></i>In-game (CAMI) group equivalent</label>
+              <input maxlength="50" type="text" class="form-control" id="ingame_equivalent" name="ingame_equivalent" v-model="card.ingame_equivalent">
+            </div>
+            <div class="form-group col-12">
+              <label for="icon"><i class="fab fa-font-awesome mr-1"></i>Icon <a target="_blank" href="https://fontawesome.com/icons">(list)</a></label>
+              <input maxlength="25" type="text" class="form-control" id="icon" name="icon" placeholder="fas fa-trophy" v-model="card.icon">
+            </div>
+            <div class="form-group col-12">
+    					<label for="name"><i class="fas fa-palette mr-1"></i>Color</label>
+              <input type="hidden" name="color" :value="card.color">
+  						<color-picker :color="card.color" v-model="card.color" />
+    				</div>
+          </div>
+          <h6 class="title">Permissions</h6>
+          <div class="form-row justify-content-center">
+            <div class="form-group col-3 text-center">
+              <label for="perms_site_admin"><i class="fas fa-lock mr-1"></i><br>Site admin</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="perms_site_admin" :value="card.perms_site_admin"></input>
+                <input type="checkbox" v-model="card.perms_site_admin" :true-value="1" :false-value="0">
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <div class="form-group col-3 text-center">
+              <label for="perms_ban_user"><i class="fas fa-gavel mr-1"></i>Manage bans</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="perms_ban_user" :value="card.perms_ban_user"></input>
+                <input type="checkbox" v-model="card.perms_ban_user" :true-value="1" :false-value="0">
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <div class="form-group col-3 text-center">
+              <label for="perms_forum_moderate"><i class="fas fa-gavel mr-1"></i>Moderate forums</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="perms_forum_moderate" :value="card.perms_forum_moderate"></input>
+                <input type="checkbox" v-model="card.perms_forum_moderate" :true-value="1" :false-value="0">
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <button type="button" @click="removeCard(card.id)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> var cards = { data: {{ groups|json_encode()|raw }}, type: 'group' } </script>
+{% endblock %}

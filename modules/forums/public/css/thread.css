@@ -1,0 +1,88 @@
+.post-profile {
+  background-color: rgba(0,0,0,.04);
+  min-width: 180px;
+  max-width: 180px;
+}
+.post-header, .post-footer {
+  background-color: inherit;
+}
+
+.post-content {
+  word-break: break-word;
+}
+.post-content p {
+  margin-bottom: 1rem;
+}
+.post-content img {
+  max-width:100%
+}
+.post-content :not(pre) code, .quoted-post-content :not(pre) code {
+  color: #ccc;
+  background: #2d2d2d;
+  padding: .1em;
+  border-radius: .3em;
+}
+.post-content pre, .quoted-post-content pre {
+  color: #ccc;
+  background: #2d2d2d;
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+}
+.post-content pre code, .quoted-post-content pre code {
+  display: inline-block;
+  max-width: 1px;
+}
+
+blockquote {
+  margin: 0 0 1.25rem;
+  padding: 0.5625rem 1.25rem 0 1.1875rem;
+  border-left: 2px solid var(--primary);
+}
+mention, .post-content [href^="/profile/"], .quoted-post-content [href^="/profile/"], .ql-editor span.mention {
+  padding: .25em .4em;
+  border-radius: .25rem;
+  color: var(--white);
+  background-color: var(--primary);
+  text-decoration: none !important;
+}
+.ql-snow .ql-editor [href^="/profile/"] {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.reaction {
+  cursor: pointer;
+  opacity: 0.3;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  -webkit-transition: 0.15s;
+          transition: 0.15s;
+}
+.reaction:hover {
+  opacity: 1;
+  -webkit-transform: scale(1.25);
+          transform: scale(1.25);
+}
+.reaction-active {
+  opacity: 1;
+}
+
+.skeleton .bone-type-image.profilecircle { /* specificity override */
+  height: 150px;
+  width: 150px;
+}
+
+.skeleton .bone-type-image.avism { /* specificity override */
+    width: 32px;
+    height: 32px;
+}
+
+.skeleton .bone-type-image.avimd { /* specificity override */
+    width: 42px;
+    height: 42px;
+}

@@ -1,0 +1,187 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'home'|lang }}{% endblock %}
+
+{% block head %}
+  {% if setting.community_slogan %}
+    <meta name="description" property="og:description" content="{{ setting.community_slogan.value }}">
+  {% endif %}
+  {% if 'video' not in setting.parallax_background.type %}
+    <style>
+    .parallax::before {
+      background: url("{{ setting.parallax_background.value ?? '/img/ember.jpg' }}") no-repeat;
+    }
+    </style>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="position: relative;">
+  <div class="parallax">
+    {% if 'video' in setting.parallax_background.type %}
+      <video autoplay muted loop>
+        <source type="{{ setting.parallax_background.type }}" src="{{ setting.parallax_background.value }}">
+      </video>
+    {% endif %}
+    <div class="middle">
+      <h1 class="title-main ci mb-0">
+        {% if setting.center_logo.value %}
+          <img style='max-width: 75%;' src='{{ setting.center_logo.value }}'></img>
+        {% else %}
+          {{ setting.community_name.value ?? 'Ember' }}
+        {% endif %}
+      </h1>
+      {% if setting.community_slogan %}
+        <h5>{{ setting.community_slogan.value }}</h5>
+      {% endif %}
+    </div>
+  </div>
+  {% if setting.display_community.value %}
+    <div class="alternatebg">
+      <h1 class="title text-center pb-4" data-aos="fade-down">{{ 'community_title'|lang }}</h1>
+      <div class="container">
+        <div class="row justify-content-center">
+          {% for statistic, value in community %}
+            <div class="col-12 col-md-4" data-aos="fade-up">
+              <div class="card hoverscale">
+                <div class="card-body">
+                  <div align="center">
+                    <i class="fas fa-{% if statistic == 'total_players' %}gamepad{% elseif statistic == 'monthly_players' %}user-clock{% else %}users{% endif %} fa-3x mb-2"></i>
+                    <h3 class="title">{{ statistic|lang }}</h3>
+                    <h5 class="title">{{ value|number_format }}</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if setting.display_features.value %}
+    <div class="alternatebg">
+      <h1 class="title text-center pb-4" data-aos="fade-down">{{ 'features_title'|lang }}</h1>
+      <div class="container">
+        <div class="row justify-content-center">
+          {% for feature in features %}
+            <div class="col-auto" data-aos="fade-up">
+              <div class="card hoverscale" style="width: 18rem;">
+                <div class="card-body">
+                  <div align="center">
+                    <i class="{{ feature.icon }} fa-5x" style="margin-bottom: 0.2em;"></i>
+                    <h3 class="card-title">{{ feature.title }}</h3>
+                    <h6 class="card-text">{{ feature.description|raw }}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if setting.display_servers.value %}
+    <div class="alternatebg">
+      <h1 class="title text-center pb-4" data-aos="fade-down">{{ 'servers_title'|lang }}</h1>
+      <div class="container">
+        <div class="row justify-content-center">
+          {% for server in servers %}
+            <div class="col-auto" data-aos="fade-up">
+              <div class="card hoverscale" style="width: 18rem;">
+                <img class="card-img-top" src="{{ server.imageURL }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ server.name }}</h5>
+                  <p class="card-text text-center" id="ct-srv-{{ server.id }}">
+                    <i class="fas fa-sync-alt fa-spin"></i>
+                  </p>
+                  <div class="text-center">
+                    {% if server.game != 'minecraft' %}
+                      <a href="steam://connect/{{ server.address }}:{{ server.queryport }}" class="btn btn-outline-custom"><i class="fas fa-gamepad mr-1"></i>{{ 'join'|lang }}</a>
+                    {% else %}
+                      <input class="form-control" style="text-align: center;" type="text" onclick="this.select()" value="{{ server.address }}:{{ server.port }}" readonly>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if setting.display_discord.value and setting.discord_server_id %}
+    <div class="alternatebg" style="overflow-x: hidden;">
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-12 col-md-auto" data-aos="fade-right">
+            <h1 class="title text-center mb-0 pb-4 pb-md-0">{{ 'discord_title'|lang }}</h1>
+            <img class="discord-logo d-none d-md-block" src="https://discordapp.com/assets/e7a3b51fdac2aa5ec71975d257d5c405.png" style="max-width: 90vw; max-height: 150px;"></img>
+          </div>
+          <div class="col-auto" data-aos="fade-left">
+            <div class="discord-
+            widget hoverscale" style="max-width: 500px; max-height:350px; width: 90vw; height: 40vh;">
+              <iframe src="https://discordapp.com/widget?id={{ setting.discord_server_id.value }}&theme=dark" width="100%" height="100%" allowtransparency="true" frameborder="0"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if setting.display_team.value and staffmembers %}
+    <div class="alternatebg">
+      <h1 class="title text-center pb-4" data-aos="fade-down">{{ 'team_title'|lang }}</h1>
+      <div class="container">
+        <div class="row justify-content-center">
+          {% for staffmember in staffmembers %}
+            <div class="col-auto" data-aos="fade-up">
+              <div class="card hoverscale" style="width: 18rem;">
+                <div class="card-img-caption">
+                  <a href="{{ path_for('profile', { steamid: staffmember.user.steamid }) }}">
+                    <img class="profilecircle" src="{{ staffmember.user.steam.avatarfull }}">
+                  </a>
+                  <div class="card-img-top">
+                    <img class="{{ staffmember.image ? '': 'blurred-profile' }}" src="{{ staffmember.image ?? staffmember.user.steam.avatarfull }}">
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div align="center">
+                    <h3 class="card-title mb-0">{{ staffmember.nameoverride ?? staffmember.user.name }}</h3>
+                    <h6 class="card-text">
+                      <span class="title" style="color: {{ staffmember.user.group.color }}">
+                        {% if staffmember.user.group.icon %}
+                          <i class="{{ staffmember.user.group.icon }} mr-1"></i>
+                        {% endif %}
+                        {{ staffmember.user.group.name }}
+                      </span>
+                      {{ staffmember.user.group.name and staffmember.serverR.name ? ' | ' }}
+                      {{ staffmember.serverR.name }}
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block bodyscripts %}
+  {% if setting.display_servers.value %}
+    <script>
+      $(document).ready(function(){
+        $.ajax({type: 'GET', url: "{{ path_for('api_servers') }}", success: function(result) {
+          $.each(result,function(i,item){
+            var newContent = "Server unreachable";
+            if (item != null) { newContent = "Map: "+item['map']+"<br>Players: "+item['players']+"/"+item['playersmax']; }
+            $("#ct-srv-"+i).fadeOut("fast", function(){
+              $("#ct-srv-"+i).replaceWith('<p class="card-text">'+newContent+'</p>');
+            });
+          });
+        }});
+      });
+    </script>
+  {% endif %}
+{% endblock %}

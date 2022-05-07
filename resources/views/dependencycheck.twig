@@ -1,0 +1,72 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Dependency check{% endblock %}
+
+{% block content %}
+  <div class="page-header" style="margin-top: -56px">
+    <h1 class="title container">{{ block('title') }}</h1>
+  </div>
+  <div class="container">
+    <div class="justify-content-center">
+      <div class="text-center">
+        <p><i>Hover over the requirements to reveal possible solutions in case they weren't fulfilled.</i></p>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-bordered table-striped table-custom">
+          <thead>
+            <tr>
+              <th scope="col">Requirement</th>
+              <th scope="col">Success</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-toggle="tooltip" title="Upgrade to PHP 7.1 or above.">PHP 7.1</td>
+              <td>{{ requirements.php_version ? icons.success|raw: icons.fail|raw }}</td>
+            </tr>
+            <tr>
+              <td data-toggle="tooltip" title="Set the value of this parameter to '1' in your 'php.ini' file or ask your hosting provider to do it for you."><code>allow_url_fopen</code> enabled</td>
+              <td>{{ requirements.allow_url_fopen ? icons.success|raw: icons.fail|raw }}</td>
+            </tr>
+            <tr>
+              <td data-toggle="tooltip" title="Install and enable the cURL PHP extension.">Client URL Library</td>
+              <td>{{ requirements.curl_extension ? icons.success|raw: icons.fail|raw }}</td>
+            </tr>
+            <tr>
+              <td data-toggle="tooltip" title="Make sure that the Steam API key provided in 'config.php' is valid.">Valid Steam API key</td>
+              <td>{{ requirements.steam_api_key ? icons.success|raw: icons.fail|raw }}</td>
+            </tr>
+            <tr>
+              <td data-toggle="tooltip" title="Install and enable the extension or ask your hosting provider to do it for you.">PDO MySQL PHP extension</td>
+              <td>{{ requirements.pdo_mysql_loaded ? icons.success|raw: icons.fail|raw }}</td>
+            </tr>
+            {% if requirements.pdo_mysql_loaded %}
+              <tr>
+                <td data-toggle="tooltip" title="Make sure that the MySQL information provided in 'config.php' is correct.">Valid MySQL credentials</td>
+                <td>{{ requirements.mysql_credentials ? icons.success|raw: icons.fail|raw }}</td>
+              </tr>
+              {% if requirements.mysql_credentials %}
+                <tr>
+                  <td data-toggle="tooltip" title="Upgrade to MySQL 5.6.5 or above.">MySQL 5.6.5</td>
+                  <td>{{ requirements.mysql_version ? icons.success|raw: icons.fail|raw }}</td>
+                </tr>
+              {% endif %}
+            {% endif %}
+            <tr>
+              <td data-toggle="tooltip" title="Make sure your web server has write access to the 'ember.lock' file within the 'app' directory.">Lock file removal privilege</td>
+              <td>{{ requirements.lock_file_privs ? icons.success|raw: icons.fail|raw }}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if requirements.mysql_error %}
+          <div class="text-center">
+            <h3>MySQL connection error</h3>
+            <span class="text-danger">
+              <samp>{{ requirements.mysql_error }}</samp>
+            </span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

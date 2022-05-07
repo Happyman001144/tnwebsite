@@ -1,0 +1,113 @@
+<?php
+$lang['en'] = array(
+  // Navigation
+  'home' => '',
+  'bans' => '',
+  'store' => '',
+
+  // Footer
+  'tos' => 'Terms of Service',
+  'privacy_policy' => 'Privacy Policy',
+  'impressum' => '',
+
+  // User dropdown
+  'sign_in' => 'Sign in',
+  'profile' => '',
+  'notifications' => '',
+  'sign_out' => 'Sign out',
+
+  // Landing
+  'join' => '',
+  'community_title' => 'Community',
+  'monthly_players' => '',
+  'total_players' => '',
+  'registered_users' => '',
+  'features_title' => 'Features',
+  'servers_title' => 'Our servers',
+  'team_title' => 'Community team',
+  'discord_title' => 'Join our community on',
+
+  // Bans
+  'ban' => '',
+  'ban_length_placeholder' => 'minutes (0 for permanent)',
+  'ban_list' => 'Ban list',
+  'date' => '',
+  'server' => '',
+  'offender' => '',
+  'admin' => '',
+  'length' => '',
+  'reason' => '',
+  'reason_lowercase' => 'reason',
+  'pardon' => '',
+  'global' => '',
+  'unknown' => '',
+  'permanent' => '',
+  'no_bans_on_record' => 'User has no bans on record',
+  'no_records_found' => 'No records found',
+
+  // Store
+  'credits' => '',
+  'choose_a_server' => 'Choose a server',
+  'browse_packages' => 'Browse packages',
+  'package_listing_credits' => 'credits',
+  'package_listing_permanent' => 'permanent',
+  'package_duration_for' => 'for',
+  'package_duration_days' => 'days',
+  'package_details' => 'Details',
+  'purchase' => '',
+  'credits_tooltip' => 'Newly purchased credits may take a moment to appear.',
+  'credits_input_placeholder' => 'amount of credits',
+  'monthly_goal' => 'Monthly goal',
+  'buy_now' => 'Buy Now',
+  'credits_amount_placeholder' => '',
+  'top_donators' => 'Top donators',
+  'recent_donations' => 'Recent donations',
+  'sign_in_to_purchase_credits' => 'Sign in to purchase credits',
+  'tos_purchase_disclaimer' => 'By making a purchase you signify your agreement to the',
+
+  // Profile
+  'info' => '',
+  'joined' => '',
+  'last_seen' => 'Last seen',
+  'last_played' => 'Last played',
+
+  // Admin
+  'loadingScreen' => 'loading screen',
+  'storePackage' => 'store package',
+  'navbarLink' => 'navbar link',
+
+  // Forums DLC
+  'forums' => '',
+  'post' => 'post',
+  'posts' => 'posts',
+  'thread' => 'thread',
+  'threads' => 'threads',
+  'replies' => 'replies',
+  'members' => 'members',
+  'no_recent_posts' => 'No recent posts',
+  'forum_statistics' => 'Forum statistics',
+  'latest_posts' => 'Latest posts',
+  'create_new_thread' => 'Create a new thread',
+  'thread_topic' => 'Thread topic',
+  'post_thread' => 'Post thread',
+  'post_reply' => 'Post reply',
+  'post_changes' => 'Post changes',
+  'cancel_editing' => 'Cancel editing',
+  'quote' => '',
+  'edit' => '',
+  'move_thread' => 'Move thread',
+  'lock_thread' => 'Lock thread',
+  'unlock_thread' => 'Unlock thread',
+  'pin_thread' => 'Pin thread',
+  'unpin_thread' => 'Unpin thread',
+  'delete' => '',
+  'thread_has_been_locked' => 'This thread has been locked',
+  'sign_in_to_reply' => 'Sign in to reply',
+  'total_posts' => 'Total posts',
+  'posts_per_day' => 'Posts per day',
+  'quoted_notification' => '%s quoted you in a post',
+  'mentioned_notification' => '%s mentioned you in a post',
+  'search_options' => 'Search options',
+  'forum_search_placeholder' => 'Search by thread topic, post content, author name or SteamID',
+  'no_results' => 'No results'
+);

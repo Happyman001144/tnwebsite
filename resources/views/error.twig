@@ -1,0 +1,36 @@
+{% extends 'templates/app.twig' %}
+
+{% if errorCode == 403 %}
+  {% set errorMsg = 'Forbidden' %}
+{% elseif errorCode == 404 %}
+  {% set errorMsg = 'Not Found' %}
+{% elseif errorCode == 405 %}
+  {% set errorMsg = 'Method Not Allowed' %}
+{% elseif errorCode == 500 %}
+  {% set errorMsg = 'Internal Server Error' %}
+{% endif %}
+
+{% block title %}{{ errorCode }} {{ errorMsg }}{% endblock %}
+
+{% block head %}
+  <style> body { margin-top: 0; } </style>
+{% endblock %}
+
+{% block content %}
+<div class="container vh-100 d-flex align-items-center justify-content-center">
+  <div class="text-center">
+    <h1 class="title">{{ errorCode }} {{ errorMsg }}</h1>
+    <p>
+      {% if errorCode == 403 %}
+        You are not allowed to access this page.
+      {% elseif errorCode == 404 %}
+        Make sure the address is correct and that the page hasn't moved.
+      {% elseif errorCode == 500 %}
+        The page cannot be displayed due to an internal error or misconfiguration.
+      {% endif %}
+    </p>
+    <br>
+    <p class="text-muted">Click <a onclick="window.history.back();" href="#">here</a> to go back, or click <a href="/">here</a> to return to the home page.</p>
+  </div>
+</div>
+{% endblock %}

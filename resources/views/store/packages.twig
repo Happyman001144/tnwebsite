@@ -1,0 +1,20 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'store'|lang }} - {{ 'packages'|lang }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="container">
+    <h1 class="title">{{ block('title') }}</h1>
+      {% if auth.check %}
+        <h5 class="title mt-2" data-toggle="tooltip" data-placement="bottom" title="{{ 'credits_tooltip'|lang }}"><i class="fas fa-coins mr-1"></i>{{ auth.user.credits.credits ?? 0 }}</h5>
+      {% endif %}
+    </div>
+  </div>
+  <div class="container">
+    <div class="justify-content-center">
+      <store-packages :packages="{{ storepackages|json_encode() }}" :signed-in="{{ auth.check ? 'true': 'false' }}"></store-packages>
+      <br>
+    </div>
+  </div>
+{% endblock %}

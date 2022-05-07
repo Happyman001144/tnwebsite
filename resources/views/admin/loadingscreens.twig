@@ -1,0 +1,50 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Loading screens{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form v-for="(card, index) in cards" onsubmit="submitForm(this); return false;" :action="save_url" method="post" class="col-12 offset-0 col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Loading screen {{card.id}}<i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="type" value="loadingScreen">
+            <input type="hidden" name="id" :value="card.id">
+            <div class="form-group col-12">
+              <label for="name"><i class="fas fa-pen mr-1"></i>Name</label>
+              <input maxlength="20" type="text" class="form-control" id="name" name="name" v-model="card.name">
+            </div>
+            <div class="form-group col-12">
+              <label for="background"><i class="far fa-image mr-1"></i>Background (image/WebM)</label>
+              <input maxlength="350" type="text" class="form-control" id="background" name="background" v-model="card.background">
+            </div>
+            <div class="form-group col-12">
+              <label for="profile_cover"><i class="far fa-image mr-1"></i>Profile cover</label>
+              <input maxlength="350" type="text" class="form-control" id="profile_cover" name="profile_cover" v-model="card.profile_cover">
+            </div>
+            <div class="form-group col-12">
+              <label><i class="fas fa-pen mr-1"></i>Rules</label>
+              <input type="hidden" name="rules" v-model="card.rules">
+              <quill-editor v-model="card.rules"></quill-editor>
+            </div>
+            <div class="form-group col-12">
+              <label><i class="fas fa-link mr-1"></i>Loading URL <a target="_blank" href="https://wiki.garrysmod.com/page/Loading_URL">(wiki)</a></label>
+              <input class="form-control" type="text" onclick="this.select()" :value='`sv_loadingurl "${sv_loadingurl}${card.id}?steamid=%s"`' readonly>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <a target="_blank" :href="`${sv_loadingurl}${card.id}?steamid=%s`" class="btn btn-outline-custom"><i class="fas fa-eye mr-1"></i>Preview</a>
+          <button type="button" @click="removeCard(card.id)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> const sv_loadingurl = "{{ base_url() }}{{ path_for('loading', {'id': ''}) }}"; </script>
+  <script> var cards = { data: {{ loadingscreens|json_encode()|raw }}, type: 'loadingScreen', servers: {{ servers|json_encode()|raw }} } </script>
+{% endblock %}

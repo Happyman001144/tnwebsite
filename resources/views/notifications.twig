@@ -1,0 +1,98 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'notifications'|lang }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1 class="title container">{{ block('title') }}</h1>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12" data-aos="fade-up">
+        <div id="ajax-content">
+          <div class="d-flex">
+            <div>
+              <button onclick="notificationReadAll($(this))" class="btn btn-outline-custom"><i class="fas fa-eye mr-1"></i>Mark all as read</button>
+            </div>
+            <div class="ml-auto">
+              {% include 'layouts/pagination.twig' %}
+            </div>
+          </div>
+          <div class="card">
+            {% for notification in notifications %}
+              {% if forums %}
+                 {% if notification.type == 'forums_quote' or notification.type == 'forums_mention' %}
+                    {% set targetURL = path_for('post', { pid: notification.json.pid }) %}
+                 {% endif %}
+              {% endif %}
+              {{ not loop.first ? '<hr class="my-1">' }}
+              <div class="d-flex notification_content" nid="{{ notification.nid }}" type="{{ notification.type }}" refid="{{ notification.refid }}" read="{{ notification.read ?? 0 }}" target="{{ targetURL }}" >
+                <div class="p-2">
+                  <h5 class="mb-0">
+                    {% if not notification.read %}
+                      <span class="badge badge-primary">New</span>
+                    {% endif %}
+                    {% if notification.content %}
+                      {{ notification.content }}
+                    {% else %}
+                      {% if notification.type == 'forums_quote' %}
+                          {{ 'quoted_notification'|lang(notification.user.name) }}
+                      {% elseif notification.type == 'forums_mention' %}
+                          {{ 'mentioned_notification'|lang(notification.user.name) }}
+                      {% endif %}
+                    {% endif %}
+                  </h5>
+                  <span data-toggle="tooltip" data-placement="right" title="{{ notification.timestamp|date('j F Y, G:i') }}">
+                    <span class="notification_timestamp" title="{{ notification.timestamp }} Z">{{ notification.timestamp }} Z</span>
+                  </span>
+                </div>
+                <div class="ml-auto py-2 mr-4 align-self-center">
+                  <span class="fa-2x" id="notification-icon-{{ notification.nid }}"><i class="far fa-hand-point-left"></i></span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          {% include 'layouts/pagination.twig' %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script>
+     function postPagination() {
+       $('.notification_timestamp').timeago();
+       $('.notification_timestamp').removeAttr('title');
+       $.each($(".notification_content"), function(i, val) {
+         if ($(this).attr("nid") != "") {
+           $(this).on('click', function() {
+             notificationRead($(this).attr("nid"), $(this).attr("read"), $(this).attr("target"));
+           });
+           $(this).css("cursor", "pointer");
+         }
+       });
+     }
+     postPagination();
+
+     function notificationRead(nid, read, redirect) {
+       toggleLoadingMode($("#notification-icon-"+nid));
+       if (read == 1) {
+         window.location = redirect;
+       } else {
+         $.post( "{{ path_for('api_notificationread') }}", { nid: nid })
+           .done(function(response) {
+             window.location = redirect;
+           },'json');
+       }
+     }
+
+     function notificationReadAll(btn) {
+       toggleLoadingMode(btn);
+       $.post( "{{ path_for('api_notificationread') }}" )
+         .done(function( response ) {
+           $("#ajax-content .pagination .active a").click();
+         },'json');
+     }
+  </script>
+{% endblock %}

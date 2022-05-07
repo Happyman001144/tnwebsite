@@ -1,0 +1,23 @@
+{% if not is_current_path('store_servers') and not is_current_path('admin_packages') %}<div class="footer-offset"></div>{% endif %}
+<footer class="footer mt-3">
+  <div class="container mb-1">
+    <div class="justify-content-center text-center mt-3">
+      <h3 class="title text-muted mr-auto">
+        {% if setting.community_logo.value %}
+          <img style='max-height: 5vh;' src='{{ setting.community_logo.value }}'></img>
+        {% else %}
+          {{ setting.community_name.value ?? 'Ember' }}
+        {% endif %}
+      </h3>
+      {% if setting.terms.value %}
+        <a class="mx-2 text-muted" href="{{ path_for('tos') }}">{{ 'tos'|lang }}</a>
+      {% endif %}
+      {% if setting.privacy.value %}
+        <a class="mx-2 text-muted" href="{{ path_for('privacy') }}">{{ 'privacy_policy'|lang }}</a>
+      {% endif %}
+      {% if setting.impressum.value %}
+        <a class="mx-2 text-muted" href="{{ path_for('impressum') }}">{{ 'impressum'|lang }}</a>
+      {% endif %}
+    </div>
+  </div>
+</footer>

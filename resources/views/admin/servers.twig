@@ -1,0 +1,72 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Servers{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form v-for="(card, index) in cards" onsubmit="submitForm(this); return false;" :action="save_url" method="post" class="col-10 offset-1 offset-md-0 col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Server {{card.id}}<i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="type" value="server">
+            <input type="hidden" name="id" :value="card.id">
+            <input type="hidden" name="order" :value="index+1">
+            <div class="form-group col-12">
+              <label for="name"><i class="fas fa-pen mr-1"></i>Server name</label>
+              <input required maxlength="30" type="text" class="form-control" id="name" name="name" v-model="card.name">
+            </div>
+            <div class="form-group col-12">
+              <label for="address"><i class="fas fa-wifi mr-1"></i>IP address</label>
+              <input required maxlength="30" type="text" class="form-control" id="address" name="address" placeholder="ttt.example.com" v-model="card.address">
+            </div>
+            <div class="form-group col-6">
+              <label for="address"><i class="fas fa-wifi mr-1"></i>Game port</label>
+              <input required maxlength="30" type="number" class="form-control" id="port" name="port" placeholder="27015" v-model="card.port">
+            </div>
+            <div class="form-group col-6">
+              <label for="address"><i class="fas fa-wifi mr-1"></i>Query port</label>
+              <input required maxlength="30" type="number" class="form-control" id="queryport" name="queryport" placeholder="27015" v-model="card.queryport">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="image"><i class="far fa-image mr-1"></i>Cover image URL</label>
+              <input maxlength="350" type="text" class="form-control" id="image" name="image" v-model="card.image">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label :for="`game${card.id}`"><i class="fas fa-gamepad mr-1"></i>Game</label>
+              <select required :id="`game${card.id}`" name="game" class="form-control" v-model="card.game">
+                <option value="ark">ARK: Survival Evolved</option>
+                <option value="arma3">Arma 3</option>
+                <option value="csgo">Counter-Strike: Global Offensive</option>
+                <option value="gmod">Garry's Mod</option>
+                <option value="minecraft">Minecraft</option>
+                <option value="rust">Rust</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group col-12">
+            <label for="token"><i class="fas fa-key mr-1"></i>Token</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button type="button" @click="generateToken(card)" class="btn btn-outline-custom"><i class="fas fa-sync-alt mr-1"></i></button>
+              </div>
+              <input required maxlength="50" type="text" class="form-control border-custom" id="token" name="token" v-model="card.token">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <button type="button" @click="removeCard(card.id)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> var cards = { data: {{ servers|json_encode()|raw }}, type: 'server' } </script>
+{% endblock %}

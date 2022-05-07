@@ -1,0 +1,12 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'users'|lang }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1 class="title container">{{ 'user_list'|lang }}</h1>
+  </div>
+  <div class="container">
+    <users-list :groups='{{ groups|json_encode()|raw }}'></users-list>
+  </div>
+{% endblock %}

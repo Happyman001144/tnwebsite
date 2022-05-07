@@ -1,0 +1,132 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Store Packages for {{ server.name }}{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form v-for="(card, index) in cards" :index="index" @submit.prevent="saveCard(card, index)" class="col-12 offset-0 col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Package {{card.id}}<i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <ul class="nav nav-pills mb-3" role="tablist">
+              <li class="nav-item" v-for="(tab, tabIndex) in tabs" @click="selectTab(index, tab)">
+                <a class="nav-link" :class="{'active' : card.activeTab === tab}" href="#" onclick="return false;" role="tab">{{tab}}</a>
+              </li>
+            </ul>
+            <div v-show="card.activeTab === `General`" id="General" class="tab-pane fade show active" role="tabpanel">
+              <div class="row">
+                <div class="form-group col-12 col-md-8">
+                  <label :for="`name${card.id}`"><i class="fas fa-pen mr-1"></i>Package name</label>
+                  <input required maxlength="30" type="text" class="form-control" :id="`name${card.id}`" name="name" placeholder="VIP" v-model="card.name">
+                </div>
+                <div class="form-group col-12 col-md-4">
+                  <label :for="`cost${card.id}`"><i class="fas fa-coins mr-1"></i>Package cost</label>
+                  <input required min="1" maxlength="30" type="number" class="form-control" :id="`cost${card.id}`" name="cost" placeholder="credits" v-model="card.cost">
+                </div>
+                <div class="form-group col-12 col-md-6">
+                  <label :for="`valid_for${card.id}`"><i class="fas fa-stopwatch mr-1"></i>Valid for (days)</label>
+                  <input type="number" min="1" class="form-control" :id="`valid_for${card.id}`" name="valid_for" placeholder="forever" v-model="card.valid_for">
+                </div>
+                <div class="form-group col-12 col-md-6">
+                  <label :for="`purchase_limit${card.id}`"><i class="fas fa-cubes mr-1"></i>Purchase limit</label>
+                  <input min="1" type="number" class="form-control" :id="`purchase_limit${card.id}`" name="purchase_limit" placeholder="unlimited" v-model="card.purchase_limit">
+                </div>
+                <div class="form-group col-12">
+                  <label :for="`image${card.id}`"><i class="far fa-image mr-1"></i>Image URL</label>
+                  <input maxlength="350" type="text" class="form-control" :id="`image${card.id}`" name="image" v-model="card.image">
+                </div>
+                <div class="form-group col-12">
+                  <label :for="`package${card.id}short_description`"><i class="fas fa-pen mr-1"></i>Short description</label>
+                  <input type="hidden" name="short_description" v-model="card.short_description">
+                  <quill-editor v-model="card.short_description"></quill-editor>
+                </div>
+                <div class="form-group col-12">
+                  <label :for="`package${card.id}description`"><i class="fas fa-pen mr-1"></i>Full description</label>
+                  <input type="hidden" name="description" v-model="card.description">
+                  <quill-editor v-model="card.description"></quill-editor>
+                </div>
+              </div>
+            </div>
+            <div v-show="card.activeTab === `Actions`" id="Actions" class="tab-pane fade show active" role="tabpanel" v-if="server.game === 'gmod'">
+              <div class="row">
+                <div class="form-group col-12 col-md-4">
+                  <label><i class="fas fa-users mr-1"></i>Group</label>
+                  <group-select v-model="card.gid" :groups="groups"></group-select>
+                </div>
+                <div class="form-group col-4">
+                  <label for="ulx_group"><i class="fas fa-users mr-1"></i>ULX group</label>
+                  <input maxlength="30" type="text" class="form-control" id="ulx_group" name="ulx_group" placeholder="vip" v-model="card.ulx_group">
+                </div>
+                <div class="form-group col-4">
+                  <label :for="`darkrpmoney${card.id}`"><i class="fas fa-money-bill-wave mr-1"></i>DarkRP money</label>
+                  <input maxlength="30" type="number" class="form-control" :id="`darkrpmoney${card.id}`" name="darkrpmoney" v-model="card.darkrpmoney">
+                </div>
+                <div class="form-group col-4">
+                  <label :for="`pspoints${card.id}`"><i class="fas fa-shopping-cart mr-1"></i>PS points</label>
+                  <input maxlength="30" type="number" class="form-control" :id="`pspoints${card.id}`" name="pspoints" v-model="card.pspoints">
+                </div>
+                <div class="form-group col-6">
+                  <label :for="`ps2points${card.id}`"><i class="fas fa-shopping-cart mr-1"></i>PS2 standard points</label>
+                  <input maxlength="30" type="number" class="form-control" :id="`ps2points${card.id}`" name="ps2points" v-model="card.ps2points">
+                </div>
+                <div class="form-group col-6">
+                  <label :for="`ps2premiumpoints${card.id}`"><i class="fas fa-shopping-cart mr-1"></i>PS2 premium points</label>
+                  <input maxlength="30" type="number" class="form-control" :id="`ps2premiumpoints${card.id}`" name="ps2premiumpoints" v-model="card.ps2premiumpoints">
+                </div>
+                <div class="form-group col-12">
+                  <input type="hidden" name="perma_weapons" v-model="card.perma_weapons"></input>
+                  <div class="d-flex mb-2">
+                    <label><i class="fas fa-bullseye mr-1"></i>Permanent weapons</label>
+                    <button type="button" @click="card.perma_weapons.push('')" class="btn btn-outline-custom ml-auto"><i class="fas fa-plus"></i></button>
+                  </div>
+                  <div v-for="(weapon, index) in card.perma_weapons">
+                    <div class="input-group col-12 mb-1">
+                      <input type="text" v-model="card.perma_weapons[index]" class="form-control border-custom" placeholder="weapon_ar2"></input>
+                      <div class="input-group-append">
+                        <button type="button" @click="card.perma_weapons.splice(index,1)" class="btn btn-outline-custom"><i class="fas fa-trash"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-show="card.activeTab === `Actions`" id="Actions" class="tab-pane fade show active container" role="tabpanel" v-else>
+              <div class="row">
+                <div class="form-group col-12 col-md-6">
+                  <label><i class="fas fa-users mr-1"></i>Group</label>
+                  <group-select v-model="card.gid" :groups="groups"></group-select>
+                </div>
+              </div>
+            </div>
+            <div v-show="card.activeTab === `Custom Lua`" id="Custom Lua" class="tab-pane fade show active" role="tabpanel" v-if="server.game === 'gmod'">
+              <div class="row">
+                <div class="form-group col-12">
+                  <label>The fields below allow you to implement custom package actions using Lua. Relevant documentation can be found <a target="_blank" href="https://ember-docs.ga/#/configuration/package?id=custom-lua">here</a>.</label>
+                </div>
+                <div class="form-group col-12">
+                  <label data-toggle="tooltip" data-placement="right" title="The code here is executed when a player joins with an unredeemed package."><i class="fas fa-code mr-1"></i>Custom Lua (redeemal)</label>
+                  <textarea maxlength="5000" type="text" class="d-none" name="lua">{{card.lua}}</textarea>
+                  <ace-editor :id="`luaeditor${card.id}`" v-model="card.lua"></ace-editor>
+                </div>
+                <div class="form-group col-12">
+                  <label data-toggle="tooltip" data-placement="right" title="The code here is executed when a player joins with a recently expired package."><i class="fas fa-code mr-1"></i>Custom Lua (expiry)</label>
+                  <textarea maxlength="5000" type="text" class="d-none" name="expiry_lua">{{card.expiry_lua}}</textarea>
+                  <ace-editor :id="`expluaeditor${card.id}`" v-model="card.expiry_lua"></ace-editor>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" @click="validateTabbedInput()" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <button type="button" @click="removeCard(card.id)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> var cards = { data: {{ storepackagestabbed|json_encode()|raw }}, type: 'storePackage', tabs: {{ server.game == 'gmod' ? "['General', 'Actions', 'Custom Lua']": "['General', 'Actions']" }}, server: {{ server|json_encode()|raw }}, groups: {{ groups|json_encode()|raw }} } </script>
+{% endblock %}

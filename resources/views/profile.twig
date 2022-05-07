@@ -1,0 +1,113 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Profile of {{ user.steam.personaname }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1 class="title container">{{ block('title') }}</h1>
+  </div>
+  <div class="container">
+    <div class="justify-content-center">
+      <div class="col-auto" data-aos="fade-up">
+        <div class="card">
+          <div class="card-img-caption">
+            <div class="card-img-top">
+              <img class="blurred-profile" src="{{ user.steam.avatarfull }}">
+            </div>
+          </div>
+          <div class="card-body">
+            <div align="center">
+              <div class="row text-center justify-content-center d-flex align-items-center mb-2" style="margin: -10%;">
+                <div class="col-auto">
+                  <div class="avatar avatar-bordered avatar-{{ user.status }} mb-3">
+  									<img src="{{ user.steam.avatarfull }}">
+  								</div>
+                </div>
+                <div class="col-auto">
+                  <h1 class="title my-0">{{ user.steam.personaname }}</h1>
+                  {% if user.group.name %}
+                    <h6 class="title" style="color: {{ user.group.color }}">
+                      <i class='{{ user.group.icon }} mr-1'></i>
+                      {{ user.group.name }}
+                    </h6>
+                  {% endif %}
+                </div>
+                <div class="col-auto">
+                  <div class="row justify-content-center mt-3">
+                    <div class="col-auto">
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <a target="_blank" href="https://steamcommunity.com/profiles/{{ user.steamid }}" class="btn btn-outline-custom"><i class="fab fa-steam mr-1"></i>{{ 'view'|lang }}</a>
+                        </div>
+                        <input class="form-control border-custom" style="text-align: center;" onclick="this.select()" value="{{ user.steamid }}" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto" data-aos="fade-up">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="my-0">{{ 'info'|lang }}</h5>
+          </div>
+          <div class="card-body">
+            <div class="row text-center justify-content-center">
+              <div class="col-auto">
+                <h3 class="title my-0">{{ 'joined'|lang }}</h3>
+                <span id="joined">{{ user.created }} Z</span>
+              </div>
+              {% if user.last_online %}
+                <div class="col-auto">
+                  <h3 class="title my-0">{{ 'last_seen'|lang }}</h3>
+                  <span data-toggle="tooltip" data-placement="right" title="{{ user.last_online|date('j F Y, G:i') }}">
+                    <span id="last_online" title="{{ user.last_online }} Z">{{ user.last_online }} Z</span>
+                  </span>
+                </div>
+              {% endif %}
+              {% if user.last_played %}
+                <div class="col-auto">
+                  <h3 class="title my-0">{{ 'last_played'|lang }}</h3>
+                  <span data-toggle="tooltip" data-placement="right" title="{{ user.last_played|date('j F Y, G:i') }}">
+                    <span id="last_played" title="{{ user.last_played }} Z">{{ user.last_played }} Z</span>
+                  </span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if auth.isAdmin %}
+        <profile-administration :user="{{ user }}" :initial-credits="{{ user.credits.credits ?? 0 }}" :groups='{{ groups|json_encode()|raw }}'></profile-administration>
+      {% endif %}
+      {% if forums %}
+        {% include 'layouts/profile_extension.twig' %}
+      {% endif %}
+      {% if setting.bans_enabled %}
+        <div class="col-auto" data-aos="fade-up">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="my-0">{{ 'bans'|lang }}</h5>
+            </div>
+            <div class="card-body">
+              <bans-table {{ auth.canBan ? ':can-ban="true"' : '' }} :offender-steamid="`{{ user.steamid }}`"></bans-table>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script>
+    $('#last_online').timeago();
+    $('#last_online').removeAttr('title');
+    $('#last_played').timeago();
+    $('#last_played').removeAttr('title');
+    $('#joined').text(moment("{{ user.created }} Z").local().format('MMM Do YYYY, HH:mm'));
+  </script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'bans'|lang }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1 class="title container">{{ 'ban_list'|lang }}</h1>
+  </div>
+  <div class="container">
+    {% if auth.canBan %}
+      <ban-input-group></ban-input-group>
+      <br>
+    {% endif %}
+    <bans-table {{ auth.canBan ? ':can-ban="true"' : '' }}></bans-table>
+  </div>
+{% endblock %}

@@ -1,0 +1,293 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Miscellaneous{% endblock %}
+
+{% block contentnoapp %}
+  <div class="page-header">
+    <h1 class="title container">{{ block('title') }}</h1>
+  </div>
+  <div class="container">
+    <form action="{{ path_for('admin_save') }}" id="generalform" method="post">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">General settings</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="category" value="general">
+            <div class="form-group col-12 col-md-3">
+              <label for="community_name"><i class="fas fa-pen mr-1"></i>Community name</label>
+              <input maxlength="100" type="text" class="form-control" id="community_name" name="community_name" value="{{ setting.community_name.value }}">
+            </div>
+            <div class="form-group col-12 col-md-3">
+              <label for="community_slogan"><i class="fas fa-pen mr-1"></i>Community slogan</label>
+              <input maxlength="500" type="text" class="form-control" id="community_slogan" name="community_slogan" value="{{ setting.community_slogan.value }}">
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <label for="community_logo"><i class="far fa-image mr-1"></i>Community logo</label>
+              <input maxlength="300" type="text" class="form-control" id="community_logo" name="community_logo" value="{{ setting.community_logo.value }}">
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <label for="background_img"><i class="far fa-image mr-1"></i>Background image</label>
+              <input maxlength="300" type="text" class="form-control" id="background_img" name="background_img" value="{{ setting.background_img.value }}">
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <label for="favicon"><i class="fas fa-globe mr-1"></i>Favicon</label>
+              <input maxlength="300" type="text" class="form-control" id="favicon" name="favicon" placeholder="/img/ember.ico" value="{{ setting.favicon.value }}">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12 col-md-2">
+              <label for="steam_sign_in_btn"><i class="fab fa-steam mr-1"></i>Sign in button</label>
+              <select id="steam_sign_in_btn" name="steam_sign_in_btn" class="form-control">
+                <option value="official" {{ setting.steam_sign_in_btn.value == 'official' ? 'selected' }}>Official</option>
+                <option value="custom" {{ setting.steam_sign_in_btn.value == 'custom' ? 'selected' }}>Custom</option>
+              </select>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <label for="navbar_style"><i class="fas fa-arrows-alt-h mr-1"></i>Navbar style</label>
+              <select id="navbar_style" name="navbar_style" class="form-control">
+                <option value="wide" {{ setting.navbar_style.value == 'wide' ? 'selected' }}>Wide</option>
+                <option value="centered" {{ setting.navbar_style.value == 'centered' ? 'selected' }}>Centered</option>
+              </select>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <label for="color_scheme"><i class="fas fa-palette mr-1"></i>Color scheme</label>
+              <select id="color_scheme" name="color_scheme" class="form-control">
+                <option value="light" {{ setting.color_scheme.value == 'light' ? 'selected' }}>Light</option>
+                <option value="dark" {{ setting.color_scheme.value == 'dark' ? 'selected' }}>Dark</option>
+                <option value="darkblurred" {{ setting.color_scheme.value == 'darkblurred' ? 'selected' }}>Dark (blurred)</option>
+                <option value="winter" {{ setting.color_scheme.value == 'winter' ? 'selected' }}>Winter</option>
+              </select>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <label for="user_list_visibility"><i class="fas fa-users mr-1"></i>User list</label>
+              <select id="user_list_visibility" name="user_list_visibility" class="form-control">
+                <option value="public" {{ setting.user_list_visibility.value == 'public' ? 'selected' }}>Public</option>
+                <option value="hidden" {{ setting.user_list_visibility.value == 'hidden' ? 'selected' }}>Hidden</option>
+              </select>
+            </div>
+            <div class="form-group col-4 col-md-1 text-center">
+              <label for="home_enabled"><i class="fas fa-home mr-1"></i>Home</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="home_enabled" value="0"></input>
+                <input type="checkbox" name="home_enabled" value="1" {{ setting.home_enabled.value ? 'checked' }}>
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <div class="form-group col-4 col-md-1 text-center">
+              <label for="bans_enabled"><i class="fas fa-ban mr-1"></i>Bans</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="bans_enabled" value="0"></input>
+                <input type="checkbox" name="bans_enabled" value="1" {{ setting.bans_enabled.value ? 'checked' }}>
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <div class="form-group col-4 col-md-1 text-center">
+              <label for="store_enabled"><i class="far fa-credit-card mr-1"></i>Store</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="store_enabled" value="0"></input>
+                <input type="checkbox" name="store_enabled" value="1" {{ setting.store_enabled.value ? 'checked' }}>
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <div class="form-group col-4 col-md-1 text-center">
+              <label for="footer_enabled"><i class="fas fa-paperclip mr-1"></i>Footer</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="footer_enabled" value="0"></input>
+                <input type="checkbox" name="footer_enabled" value="1" {{ setting.footer_enabled.value ? 'checked' }}>
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <p>
+              <button class="btn btn-outline-custom m-2" type="button" data-toggle="collapse" data-target="#collapseCSS">
+                <i class="fab fa-css3 mr-1"></i>Custom CSS
+              </button>
+              <button class="btn btn-outline-custom mr-2" type="button" data-toggle="collapse" data-target="#collapseTerms">
+                <i class="fas fa-gavel mr-1"></i>Terms
+              </button>
+              <button class="btn btn-outline-custom mr-2" type="button" data-toggle="collapse" data-target="#collapsePrivacy">
+                <i class="fas fa-user-secret mr-1"></i>Privacy
+              </button>
+              <button class="btn btn-outline-custom" type="button" data-toggle="collapse" data-target="#collapseImpressum">
+                <i class="fas fa-briefcase mr-1"></i>Impressum
+              </button>
+            </p>
+          </div>
+          <div class="collapse form-row" id="collapseCSS">
+            <div class="form-group col-12">
+              <label for="cssarea"><i class="fab fa-css3 mr-1"></i>Custom CSS</label>
+              <textarea maxlength="3000" rows="5" type="text" class="form-control" id="cssarea" name="custom_css">{{ setting.custom_css.value }}</textarea>
+              <div id="custom_css" style="height: 20em; width: 100%;"></div>
+            </div>
+          </div>
+          <div id="quillapp">
+            <div class="collapse form-row" id="collapseTerms">
+              <div class="form-group col-12">
+                <label><i class="fas fa-gavel mr-1"></i>Terms of Service</label>
+                <input type="hidden" name="terms" v-model="terms">
+                <quill-editor v-model="terms"></quill-editor>
+              </div>
+            </div>
+            <div class="collapse form-row" id="collapsePrivacy">
+              <div class="form-group col-12">
+                <label><i class="fas fa-user-secret mr-1"></i>Privacy Policy</label>
+                <input type="hidden" name="privacy" v-model="privacy">
+                <quill-editor v-model="privacy"></quill-editor>
+              </div>
+            </div>
+            <div class="collapse form-row" id="collapseImpressum">
+              <div class="form-group col-12">
+                <label><i class="fas fa-user-secret mr-1"></i>Impressum</label>
+                <input type="hidden" name="impressum" v-model="impressum">
+                <quill-editor v-model="impressum"></quill-editor>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+        </div>
+      </div>
+    </form>
+    <form action="{{ path_for('admin_save') }}" id="landingform" method="post">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Landing page settings</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="category" value="landing">
+            <div class="form-group col-12 col-md-4">
+              <label for="center_logo"><i class="far fa-image mr-1"></i>Center logo</label>
+              <input maxlength="300" type="text" class="form-control" id="center_logo" name="center_logo" value="{{ setting.center_logo.value }}">
+            </div>
+            <div class="form-group col-12 col-md-4">
+              <label for="parallax_background"><i class="far fa-image mr-1"></i>Parallax background (img/video)</label>
+              <input maxlength="300" type="text" class="form-control" id="parallax_background" name="parallax_background" value="{{ setting.parallax_background.value }}">
+            </div>
+            <div class="form-group col-12 col-md-4">
+              <label for="discord_server_id"><i class="fab fa-discord mr-1"></i>Discord widget Server ID <a target="_blank" href="https://blog.discordapp.com/add-the-discord-widget-to-your-site-d45ffcd718c6">(info)</a></label>
+              <input maxlength="300" type="text" class="form-control" id="discord_server_id" name="discord_server_id" value="{{ setting.discord_server_id.value }}">
+            </div>
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="form-group col-4 col-md-1 text-center">
+                  <label><i class="fas fa-users mr-1"></i><br>Community section</label><br>
+                  <div class="pretty p-icon p-round p-jelly mr-0">
+                    <input type="hidden" name="display_community" value="0"></input>
+                    <input type="checkbox" name="display_community" value="1" {{ setting.display_community.value ? 'checked' }}>
+                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                  </div>
+                </div>
+                <div class="form-group col-4 col-md-1 text-center">
+                  <label><i class="fas fa-check mr-1"></i><br>Features section</label><br>
+                  <div class="pretty p-icon p-round p-jelly mr-0">
+                    <input type="hidden" name="display_features" value="0"></input>
+                    <input type="checkbox" name="display_features" value="1" {{ setting.display_features.value ? 'checked' }}>
+                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                  </div>
+                </div>
+                <div class="form-group col-4 col-md-1 text-center">
+                  <label><i class="fab fa-discord mr-1"></i><br>Discord section</label><br>
+                  <div class="pretty p-icon p-round p-jelly mr-0">
+                    <input type="hidden" name="display_discord" value="0"></input>
+                    <input type="checkbox" name="display_discord" value="1" {{ setting.display_discord.value ? 'checked' }}>
+                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                  </div>
+                </div>
+                <div class="form-group col-4 col-md-1 text-center">
+                  <label><i class="fas fa-server mr-1"></i><br>Servers section</label><br>
+                  <div class="pretty p-icon p-round p-jelly mr-0">
+                    <input type="hidden" name="display_servers" value="0"></input>
+                    <input type="checkbox" name="display_servers" value="1" {{ setting.display_servers.value ? 'checked' }}>
+                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                  </div>
+                </div>
+                <div class="form-group col-4 col-md-1 text-center">
+                  <label><i class="far fa-user-circle mr-1"></i><br>Team section</label><br>
+                  <div class="pretty p-icon p-round p-jelly mr-0">
+                    <input type="hidden" name="display_team" value="0"></input>
+                    <input type="checkbox" name="display_team" value="1" {{ setting.display_team.value ? 'checked' }}>
+                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+        </div>
+      </div>
+    </form>
+    {% if auth.isOwner %}
+      <form action="{{ path_for('admin_save') }}" id="storeform" method="post">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="my-0">Store settings</h5>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <input type="hidden" name="category" value="store">
+              <div class="form-group col-12 col-md-6">
+                <label for="paypal_email"><i class="fab fa-paypal mr-1"></i>PayPal email</label>
+                <input maxlength="50" type="text" class="form-control" id="paypal_email" name="paypal_email" placeholder="(for receiving payments)" value="{{ setting.paypal_email.value }}">
+              </div>
+              <div class="form-group col-12 col-md-6">
+                <label for="ipn_url"><i class="fas fa-link mr-1"></i>IPN URL <a target="_blank" href="https://www.{{ setting.enable_sandbox.value ? 'sandbox.' }}paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify">(enter it here)</a></label>
+                <input class="form-control" type="text" onclick="this.select()" id="ipn_url" value="{{ base_url() }}{{ path_for('store_ipn') }}" readonly>
+              </div>
+              <div class="form-group col-4 col-md-3 text-center">
+                <label for="enable_sandbox"><i class="fas fa-toolbox mr-1"></i>Sandbox (testing) mode<br>
+                <div class="pretty p-icon p-round p-jelly mr-0">
+                  <input type="hidden" name="enable_sandbox" value="0"></input>
+                  <input type="checkbox" name="enable_sandbox" value="1" {{ setting.enable_sandbox.value ? 'checked' }}>
+                  <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                </div>
+              </div>
+              <div class="form-group col-6 col-md-2">
+                <label for="paypal_currency"><i class="fas fa-money-bill mr-1"></i>Currency</label>
+                <select id="paypal_currency" name="paypal_currency" class="form-control">
+                  {% for cur in pp_currency_options %}
+                    <option value="{{ cur }}" {{ setting.paypal_currency.value == cur ? 'selected' }}>{{ cur }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group col-6 col-md-2">
+                <label for="monthly_goal"><i class="fas fa-trophy mr-1"></i>Monthly goal</label>
+                <input maxlength="30" min="0" type="number" class="form-control" id="monthly_goal" name="monthly_goal" value="{{ setting.monthly_goal.value }}">
+              </div>
+              <div class="form-group col-6 col-md-2">
+                <label for="minimum_purchase"><i class="fas fa-coins mr-1"></i>Minimum purchase</label>
+                <input required maxlength="30" min="1" type="number" class="form-control" id="minimum_purchase" name="minimum_purchase" placeholder="(credits)" value="{{ setting.minimum_purchase.value ?? 500 }}">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script src="/js/forms.js?{{ script_version_hash }}"></script>
+  <script>
+    $('#generalform, #landingform, #storeform').on('submit', function() { submitForm(this); return false; });
+
+    var csseditor = ace.edit("custom_css");
+    csseditor.setTheme("ace/theme/monokai");
+    csseditor.session.setMode("ace/mode/css");
+    var textarea = $('#cssarea').hide();
+    csseditor.getSession().setValue(textarea.val());
+    csseditor.getSession().on('change', function(){
+      textarea.val(csseditor.getSession().getValue());
+    });
+
+    var quillapp = new Vue({
+      el: '#quillapp',
+      data: {
+        terms: {{ setting.terms.value|json_encode()|raw }},
+        privacy: {{ setting.privacy.value|json_encode()|raw }},
+        impressum: {{ setting.impressum.value|json_encode()|raw }}
+      }
+    });
+  </script>
+{% endblock %}

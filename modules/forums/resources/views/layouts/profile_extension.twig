@@ -1,0 +1,19 @@
+<div class="col-auto" data-aos="fade-up">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="my-0">{{ 'forums'|lang }}</h5>
+    </div>
+    <div class="card-body">
+      <div class="row text-center justify-content-center">
+        <div class="col-auto">
+          <h3 class="title my-0">{{ 'total_posts'|lang }}</h3>
+          <h2 class="title my-0">{{ user.posts.count|number_format }}</h2>
+        </div>
+        <div class="col-auto">
+          <h3 class="title my-0">{{ 'posts_per_day'|lang }}</h3>
+          <h2 class="title my-0">{{ user.posts_per_day|round(2) }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

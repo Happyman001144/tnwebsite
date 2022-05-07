@@ -1,0 +1,41 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Features{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form v-for="(card, index) in cards" onsubmit="submitForm(this); return false;" :action="save_url" method="post" class="col-12 offset-0 col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Feature {{card.id}}<i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="type" value="feature">
+            <input type="hidden" name="id" :value="card.id">
+            <input type="hidden" name="order" :value="index+1">
+            <div class="form-group col-6">
+              <label for="title"><i class="fas fa-pen mr-1"></i>Title</label>
+              <input maxlength="20" type="text" class="form-control" id="title" name="title" v-model="card.title">
+            </div>
+            <div class="form-group col-6">
+              <label for="icon"><i class="fab fa-font-awesome mr-1"></i>Icon <a target="_blank" href="https://fontawesome.com/icons">(list)</a></label>
+              <input maxlength="25" type="text" class="form-control" id="icon" name="icon" placeholder="fas fa-trophy" v-model="card.icon">
+            </div>
+            <div class="form-group col-12">
+              <label><i class="fas fa-pen mr-1"></i>Description</label>
+              <input type="hidden" name="description" v-model="card.description">
+              <quill-editor v-model="card.description"></quill-editor>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <button type="button" @click="removeCard(card.id)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> var cards = { data: {{ features|json_encode()|raw }}, type: 'feature' } </script>
+{% endblock %}

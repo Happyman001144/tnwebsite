@@ -1,0 +1,31 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'forums'|lang }}{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="/modules/forums/css/thread" />
+  {% if setting.color_scheme.value != 'light' %}
+    <style>.post-content a { color: var(--gray); }</style>
+  {% endif %}
+{% endblock %}
+
+{% block contentnoapp %}
+  <div id="forumsspa">
+    <router-view></router-view>
+  </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.7/showdown.min.js"></script>
+  <script>
+    const auth = {
+      user: {{ auth.user|json_encode()|raw }},
+      canModerateForums: {{ auth.canModerateForums|json_encode()|raw }}
+    };
+  </script>
+  {% if auth.canModerateForums %}
+    <script> var boardOptions = { {% for fb in boards %}{{ fb.bid }}:'{{ fb.name }}',{% endfor %} }</script>
+  {% endif %}
+  <script> const titleSuffix = ' · {{ setting.community_name.value ?? 'Ember' }}';</script>
+  <script src="{{ forumsspajsmix }}"></script>
+{% endblock %}

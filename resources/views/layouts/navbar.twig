@@ -1,0 +1,123 @@
+<nav class="navbar fixed-top navbar-dark bg-primary navbar-expand-lg">
+  {% if setting.navbar_style.value == 'centered' %}<div class="container">{% endif %}
+  <a class="navbar-brand">
+    {% if setting.community_logo.value %}
+      <img style='max-height: 40px;' src='{{ setting.community_logo.value }}'></img>
+    {% else %}
+      {{ setting.community_name.value ?? 'Ember' }}
+    {% endif %}
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+    <ul class="navbar-nav">
+      {% if setting.home_enabled.value %}
+        <li class="nav-item">
+          <a class="nav-link {{ is_current_path('landing') ? 'active' }}" href="{{ path_for('landing') }}">
+            <i class="fas fa-home mr-1"></i>{{ 'home'|lang }}
+          </a>
+        </li>
+      {% endif %}
+      {% if setting.store_enabled.value %}
+        <li class="nav-item dropdown {{ '/store/' in current_path() ? 'active' }}">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="far fa-credit-card mr-1"></i>{{ 'store'|lang }}
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item"  href="{{ path_for('store') }}"><i class="fas fa-coins mr-1"></i>{{ 'credits'|lang }}</a>
+            <a class="dropdown-item" href="{{ path_for('store_servers') }}"><i class="fas fa-shopping-cart mr-1"></i>Packages</a>
+          </div>
+        </li>
+      {% endif %}
+      {% if setting.bans_enabled.value %}
+        <li class="nav-item">
+          <a class="nav-link {{ is_current_path('bans') ? 'active' }}" href="{{ path_for('bans') }}"><i class="fas fa-ban mr-1"></i>{{ 'bans'|lang }}</a>
+        </li>
+      {% endif %}
+      {% if forums %}
+        <li class="nav-item">
+          <a class="nav-link {{ '/forums' in current_path() and '/admin' in current_path() == false ? 'active' }}" href="{{ path_for('forums') }}"><i class="fas fa-comment-alt mr-2"></i>{{ 'forums'|lang }}</a>
+        </li>
+      {% endif %}
+      {% if setting.user_list_visibility.value != 'hidden' %}
+        <li class="nav-item">
+          <a class="nav-link {{ is_current_path('users') ? 'active' }}" href="{{ path_for('users') }}"><i class="fas fa-users mr-1"></i>{{ 'users'|lang }}</a>
+        </li>
+      {% endif %}
+      {% if auth.check and auth.isAdmin %}
+        <li class="nav-item dropdown {{ '/admin/' in current_path() ? 'active' }}">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-lock mr-1"></i>Admin
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{{ path_for('admin_dashboard') }}"><i class="fas fa-chart-area mr-1"></i>Dashboard</a>
+            <a class="dropdown-item" href="{{ path_for('admin_misc') }}"><i class="fas fa-cogs mr-1"></i>Miscellaneous</a>
+            {% if setting.user_list_visibility.value == 'hidden' %}
+              <a class="dropdown-item" href="{{ path_for('admin_users') }}"><i class="fas fa-users mr-1"></i>Users</a>
+            {% endif %}
+            <a class="dropdown-item" href="{{ path_for('admin_groups') }}"><i class="fas fa-users-cog mr-1"></i>Groups</a>
+            {% if forums %}
+              <a class="dropdown-item" href="{{ path_for('admin_forums') }}"><i class="fas fa-comment-alt mr-1"></i>Forums</a>
+            {% endif %}
+            <a class="dropdown-item" href="{{ path_for('admin_servers') }}"><i class="fas fa-server mr-1"></i>Servers</a>
+            <a class="dropdown-item" href="{{ path_for('admin_packages') }}"><i class="fas fa-shopping-cart mr-1"></i>Store packages</a>
+            <a class="dropdown-item" href="{{ path_for('admin_loading_screens') }}"><i class="fas fa-download mr-1"></i>Loading screens</a>
+            <a class="dropdown-item" href="{{ path_for('admin_features') }}"><i class="fas fa-box-open mr-1"></i>Features</a>
+            <a class="dropdown-item" href="{{ path_for('admin_team') }}"><i class="fas fa-users mr-1"></i>Team</a>
+            <a class="dropdown-item" href="{{ path_for('admin_links') }}"><i class="fas fa-link mr-1"></i>Navbar links</a>
+          </div>
+        </li>
+      {% endif %}
+      {% for link in navbarlink %}
+        {% if not link.admin_only or auth.admin %}
+          <li class="nav-item">
+            <a class="nav-link" target="_blank" href="{{ link.url }}"><i class="{{ link.icon }} mr-1"></i>{{ link.name }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="navbar-collapse collapse order-3 dual-collapse2">
+    <ul class="navbar-nav ml-auto">
+
+      {% if auth.check and auth.user.unread_notifications.count > 0 %}
+        <div class="d-flex">
+          <li class="nav-item align-self-center mr-2">
+            <a href="{{ path_for('notifications') }}">
+              <span class="badge badge-danger">{{ auth.user.unread_notifications.count }}</span>
+            </a>
+          </li>
+        </div>
+      {% endif %}
+
+      <li class="nav-item text-nowrap">
+      {% if auth.check == false %}
+        {% if setting.steam_sign_in_btn.value == 'custom' %}
+          <a class="nav-link btn btn-outline-custom" href="{{ path_for('auth') }}?redirect={{ current_path() }}">
+            <i class="fab fa-steam mr-1"></i>{{ 'sign_in'|lang }}
+          </a>
+        {% else %}
+          <a href="{{ path_for('auth') }}?redirect={{ current_path() }}"><img alt="{{ 'sign_in'|lang }}" src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png"></img></a>
+        {% endif %}
+      {% else %}
+        <div class="dropdown">
+          <a href="#" data-toggle="dropdown">
+            <img id="navAvatar" class="avism" src="{{ session.avatarfull }}"></img>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{{ path_for('profile', { 'steamid': session.steamid }) }}"><i class="fas fa-user mr-1"></i>{{ 'profile'|lang }}</a>
+            <a class="dropdown-item" href="{{ path_for('notifications') }}"><i class="fas fa-bell mr-1"></i>{{ 'notifications'|lang }}</a>
+            <form action="{{ path_for('logout') }}" method="post">
+              <input type="hidden" name="redirect" value="{{ current_path() }}">
+              <input type="hidden" name="logout" value="1">
+              <button style="cursor: pointer;" class="dropdown-item"><i class="fas fa-sign-out-alt mr-1"></i>{{ 'sign_out'|lang }}</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+      </li>
+    </ul>
+  </div>
+  {% if setting.navbar_style.value == 'centered' %}</div>{% endif %}
+</nav>

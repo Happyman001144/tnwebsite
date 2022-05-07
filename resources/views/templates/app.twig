@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ block('title') }} &middot; {{ setting.community_name.value ?? 'Ember' }}</title>
+    <link rel="icon" href="{{ setting.favicon.value ?? '/img/ember.ico' }}">
+    <meta property="og:site_name" content="{{ setting.community_name.value ?? 'Ember' }}">
+    <meta property="og:title" content="{{ block('title') }}">
+    {% if setting.community_logo.value %}
+      <meta property="og:image" content="{{ setting.community_logo.value }}">
+    {% endif %}
+    <link rel="stylesheet" href="{{ 'css/app.css'|mix }}" />
+    <meta name="csrf-token" content="{{ 'token' }}">
+    {% if setting.background_img.value and '/loading/' in current_path() == false %}
+      <link rel="stylesheet" href="/css/bg-img.css?{{ script_version_hash }}">
+    {% endif %}
+    {% if setting.color_scheme.value == 'dark' %}
+      <link rel="stylesheet" href="/css/dark.css?{{ script_version_hash }}">
+      <meta name="theme-color" content="#343a40">
+    {% elseif setting.color_scheme.value == 'darkblurred' %}
+      <link rel="stylesheet" href="/css/dark.css?{{ script_version_hash }}">
+      <meta name="theme-color" content="#343a40">
+      <style>:root { --gray-dark: #343a4070; } .modal-content { background-color: #343a40 !important; } .swal2-popup { background: #343a40 !important; } .page-header { background: none; }</style>
+    {% elseif setting.color_scheme.value == 'winter' %}
+      <link rel="stylesheet" href="/css/dark.css?{{ script_version_hash }}">
+      <meta name="theme-color" content="#dc3545">
+      <style> .navbar { background-color: var(--red) !important; } .snow { z-index: 1 !important; } </style>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Snowstorm/20131208/snowstorm-min.js"></script>
+      <script> snowStorm.className = 'snow'; snowStorm.snowCharacter = '❄'; snowStorm.flakeWidth = 32; snowStorm.flakeHeight = 32; </script>
+    {% else %}
+      <link rel="stylesheet" href="/css/light.css?{{ script_version_hash }}">
+    {% endif %}
+    <style>{{ setting.custom_css.value }}</style>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    {% block head %}{% endblock %}
+
+    {% if '/admin/' in current_path() %}
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" />
+    {% endif %}
+  </head>
+  <body {{ '/loading/' in current_path()? 'class="my-0"': '' }}>
+    {% if setting.background_img.value %}
+      <div class="bg-wrapper">
+        <div class="bg-img" style="background-image: url('{{ setting.background_img.value }}');"></div>
+        <div class="bg-overlay"></div>
+      </div>
+    {% endif %}
+
+    {% if '/admin/' in current_path() and '/misc' not in current_path() and '/users' not in current_path() and current_path() != '/admin/packages' %}
+      <div class="page-header">
+        <h1 class="title container">{{ block('title') }}</h1>
+      </div>
+      <div id="settingsapp" class="container" style="display: none;">
+        <draggable class="row" v-model="cards" :options="draggableOptions">
+          {% block settingscontent %}{% endblock %}
+        </draggable>
+        {% if '/team' in current_path() == false %}
+          <div class="text-center">
+            <button class="btn btn-outline-custom" @click="addCard">Add a {{ '{{cardType|lang}}' }}</button>
+          </div>
+        {% else %}
+          <div class="text-center">
+            <div class="input-group input-group-lg col-s-12 col-md-6 offset-md-3">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-custom" @click="addCard"><i class="fas fa-user-plus mr-1"></i>Add</button>
+              </div>
+              <input required maxlength="50" type="text" class="form-control border-custom" id="addTeamSteamid" name="steamid" placeholder="SteamID64">
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if '/dependencycheck' in current_path() == false and '/loading/' in current_path() == false and errorCode is null %}
+      {% include 'layouts/navbar.twig' %}
+    {% endif %}
+    <div class="" id="app">
+      {% block content %}{% endblock %}
+    </div>
+    {% block contentnoapp %}{% endblock %}
+
+    <script src="{{ 'js/manifest.js'|mix }}>"></script>
+    <script src="{{ 'js/vendor.js'|mix }}>"></script>
+    <script src="{{ 'js/app.js'|mix }}>"></script>
+
+    <script>$(function () {$('[data-toggle="tooltip"]').tooltip({ boundary: 'window' })})</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.26.9/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.3/jquery.timeago.min.js"></script>
+
+    {% if '/admin/' in current_path() %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js" type="text/javascript" charset="utf-8"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    {% endif %}
+
+    {{ block('bodyscripts') ?? null }}
+
+    {% if '/admin/' in current_path() and '/misc' not in current_path() and '/users' not in current_path() and '/dashboard' not in current_path() and not is_current_path('admin_packages') %}
+      <script>const save_url="{{ path_for('admin_card_save') }}";</script>
+      <script src="/js/forms.js?{{ script_version_hash }}"></script>
+      {% if '/forums' not in current_path() %}
+        <script src="/js/adminvue.js?{{ script_version_hash }}"></script>
+      {% endif %}
+    {% endif %}
+
+    {% if setting.footer_enabled.value and '/dependencycheck' in current_path() == false and '/loading/' in current_path() == false and errorCode is null %}
+      {% include 'layouts/footer.twig' %}
+    {% endif %}
+  </body>
+</html>

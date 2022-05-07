@@ -1,0 +1,48 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Links{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form :action="save_url" v-for="(card, index) in cards" onsubmit="submitForm(this); return false;" :id="`navbarlinkform{{card.id}}`" method="post" class="col-12 offset-0 col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Link {{card.id}}<i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="type" value="navbarLink">
+            <input type="hidden" name="id" :value="card.id">
+            <input type="hidden" name="order" :value="index+1">
+            <div class="form-group col-6">
+              <label for="name"><i class="fas fa-pen mr-1"></i>Name</label>
+              <input required maxlength="20" type="text" class="form-control" id="name" name="name" v-model="card.name">
+            </div>
+            <div class="form-group col-6">
+              <label for="icon"><i class="fab fa-font-awesome mr-1"></i>Icon <a target="_blank" href="https://fontawesome.com/icons">(list)</a></label>
+              <input maxlength="25" type="text" class="form-control" id="icon" name="icon" placeholder="fas fa-trophy" v-model="card.icon">
+            </div>
+            <div class="form-group col-9">
+              <label for="url"><i class="fas fa-link mr-1"></i>URL</label>
+              <input required maxlength="300" type="text" class="form-control" id="url" name="url" v-model="card.url">
+            </div>
+            <div class="form-group col-3 text-center">
+              <label for="admin_only"><i class="fas fa-eye-slash mr-1"></i>Admin only</label><br>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="admin_only" :value="card.admin_only"></input>
+                <input type="checkbox" v-model="card.admin_only" :true-value="1" :false-value="0">
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <button type="button" @click="removeCard(card.id)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> var cards = { data: {{ navbarlink|json_encode()|raw }}, type: 'navbarLink' } </script>
+{% endblock %}

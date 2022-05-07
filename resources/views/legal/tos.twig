@@ -1,0 +1,12 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'tos'|lang }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1 class="title container">{{ block('title') }}</h1>
+  </div>
+  <div class="container">
+    <p>{{ setting.terms.value|raw }}</p>
+  </div>
+{% endblock %}

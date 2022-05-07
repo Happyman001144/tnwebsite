@@ -1,0 +1,142 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Forums{% endblock %}
+
+{% block contentnoapp %}
+  <div class="container" id="forumsettingsapp" style="display: none;">
+    <form action="{{ path_for('admin_save') }}" id="forumSettingsForm" method="post">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Miscellaneous settings</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="category" value="forums">
+            <div class="form-group col-4 col-md-2">
+              <label for="bans_enabled"><i class="fas fa-comment-alt mr-1"></i>Reactions enabled</label>
+              <div class="pretty p-icon p-round p-jelly mr-0">
+                <input type="hidden" name="reactions_enabled" value="0"></input>
+                <input type="checkbox" name="reactions_enabled" value="1" {{ setting.reactions_enabled.value ? 'checked' }}>
+                <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+              </div>
+            </div>
+            <div class="form-group col-12 col-md-3">
+              <label for="community_name"><i class="fas fa-comment-alt mr-1"></i>Max reactions per user per post</label>
+              <input required type="number" min="1" class="form-control" id="max_reactions_per_user_per_post" name="max_reactions_per_user_per_post" value="{{ setting.max_reactions_per_user_per_post.value ?? 1 }}">
+            </div>
+          </div>
+          <button type="button" onclick="submitForm($('#forumSettingsForm'))" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+        </div>
+      </div>
+    </form>
+    {% verbatim %}
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0">Category settings</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row mb-3">
+            <input type="hidden" name="type" value="forumCategory">
+            <input type="hidden" name="action" value="update">
+            <div class="col-12" id="categoryWrapper">
+              <ul v-for="(category, index) in categories" class="list-group mb-4">
+                <div class="form-group">
+                  <label for="category_name"><i class="fas fa-pen mr-1"></i>Category {{category.cid}} name</label>
+                  <div class="input-group">
+                    <input required maxlength="100" type="text" class="form-control" placeholder="Category name" v-model="category.name" @change="updateCategory(category.cid, category.name)">
+                    <div class="input-group-prepend">
+                      <button type="button" @click="removeCategory(category.cid)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <h5 class="title">Boards</h5>
+                <draggable v-model="category.boards" :options="draggableOptions" @change="updateBoardPositions" style="min-height: 10px;">
+                  <li v-for="(board, index) in category.boards" class="list-group-item">
+                    <div class="row">
+                      <div class="form-group col-3">
+                        <label><i class="fab fa-font-awesome mr-1"></i>Board icon <a target="_blank" href="https://fontawesome.com/icons">(list)</a></label>
+                        <input type="text" class="form-control" placeholder="Board icon" v-model="board.icon" @change="updateBoard(board.bid, category.cid, 'icon', board.icon)">
+                      </div>
+                      <div class="form-group col-6">
+                        <label><i class="fas fa-pen mr-1"></i>Board name</label>
+                        <div class="input-group">
+                          <input required type="text" class="form-control" placeholder="Board name" v-model="board.name" @change="updateBoard(board.bid, category.cid, 'name', board.name)">
+                          <div class="input-group-prepend">
+                            <button type="button" @click="removeBoard(board.bid)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <button class="btn btn-outline-custom mt-4" type="button" data-toggle="collapse" :data-target="`#board_permissions_${board.bid}`">
+                          Permissions
+                        </button>
+                        <h5 class="float-right mt-4"><i class="float-right cursor-pointer text-muted fas fa-arrows-alt mt-2"></i></h5>
+                      </div>
+                      <div class="collapse col-12" :id="`board_permissions_${board.bid}`">
+                        <div class="table-responsive">
+                          <table id="bansTable" class="table table-bordered table-striped table-custom">
+                            <thead>
+                              <tr>
+                                <th scope="col">Group</th>
+                                <th scope="col">Can view</th>
+                                <th scope="col">Can post thread</th>
+                                <th scope="col">Can post reply</th>
+                                <th scope="col">Can post reaction</th>
+                              </tr>
+                            </thead>
+                            <tbody class="text-center">
+                              <tr v-for="(group, index) in groups">
+                                <th scope="row">{{group.name}}</th>
+                                <td>
+                                  <div class="pretty p-icon p-round p-jelly mr-0">
+                                    <input type="checkbox" @click="updatePermission(board.bid, group.gid, 'cannot_view')" v-model="board.permissions_extended && board.permissions_extended[group.gid] && board.permissions_extended[group.gid].cannot_view" :true-value="null" :false-value="1">
+                                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="pretty p-icon p-round p-jelly mr-0">
+                                    <input type="checkbox" @click="updatePermission(board.bid, group.gid, 'cannot_post_thread')" v-model="board.permissions_extended && board.permissions_extended[group.gid] && board.permissions_extended[group.gid].cannot_post_thread" :true-value="null" :false-value="1">
+                                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="pretty p-icon p-round p-jelly mr-0">
+                                    <input type="checkbox" @click="updatePermission(board.bid, group.gid, 'cannot_post_reply')" v-model="board.permissions_extended && board.permissions_extended[group.gid] && board.permissions_extended[group.gid].cannot_post_reply" :true-value="null" :false-value="1">
+                                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="pretty p-icon p-round p-jelly mr-0">
+                                    <input type="checkbox" @click="updatePermission(board.bid, group.gid, 'cannot_react')" v-model="board.permissions_extended && board.permissions_extended[group.gid] && board.permissions_extended[group.gid].cannot_react" :true-value="null" :false-value="1">
+                                    <div class="state p-primary"><i class="icon fas fa-check"></i><label></label></div>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </draggable>
+              </ul>
+            </div>
+          </div>
+          <div class="text-center">
+            <button type="button" class="btn btn-outline-custom mr-2" @click="addCategory()"><i class="fas fa-plus mr-1"></i>Add a category</button>
+            <button type="button" class="btn btn-outline-custom" @click="addBoard()"><i class="fas fa-plus mr-1"></i>Add a board</button>
+          </div>
+        </div>
+      </div>
+    {% endverbatim %}
+  </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script>
+    var categories = {{ categories|json_encode()|raw }};
+    var groups = {{ groups|json_encode()|raw }};
+    var basePermissions = {{ basePermissions|json_encode()|raw }};
+  </script>
+  <script src="/modules/forums/js/settingsapp"></script>
+{% endblock %}

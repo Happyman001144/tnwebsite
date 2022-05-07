@@ -1,0 +1,119 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}{{ 'store'|lang }} - {{ 'credits'|lang }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div class="container">
+      <h1 class="title">{{ block('title') }}</h1>
+      {% if auth.check %}
+        <h5 class="title mt-2" data-toggle="tooltip" data-placement="bottom" title="{{ 'credits_tooltip'|lang }}"><i class="fas fa-coins mr-1"></i>{{ auth.user.credits.credits ?? 0 }}</h5>
+      {% endif %}
+    </div>
+  </div>
+  <div class="container">
+    <div class="justify-content-center">
+      <div class="text-center">
+        {% if setting.monthly_goal.value %}
+          <div data-aos="fade-down">
+            <h2>{{ 'monthly_goal'|lang }}<small class="text-muted">&nbsp; {{ monthly_revenue|round(2) }} / {{ setting.monthly_goal.value|round(2) }} {{ setting.paypal_currency.value }}</small></h2>
+            <div class="col-s-12 col-md-6 offset-md-3">
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ monthly_revenue / setting.monthly_goal.value * 100 }}%"></div>
+              </div>
+            </div>
+          </div>
+          <br>
+        {% endif %}
+        <div data-aos="fade-up">
+          {% if auth.check %}
+            <div class="text-center">
+              <div class="input-group input-group-lg col-s-12 col-md-6 offset-md-3">
+                <div class="input-group-prepend">
+                  <button class="btn btn-outline-custom" onclick="purchaseCredits()"><i class="fab fa-paypal mr-1"></i>{{ 'buy_now'|lang }}</button>
+                  <form action="https://www.{{ setting.enable_sandbox.value ? 'sandbox.' }}paypal.com/cgi-bin/webscr" method="post" id="creditsPurchaseForm">
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="{{ setting.paypal_email.value }}">
+                    <input type="hidden" name="item_name" value="Credits">
+                    <input type="hidden" name="amount" value="0.01">
+                    <input type="hidden" name="quantity" id="creditsFormQuantity" min="{{ setting.minimum_purchase.value }}">
+                    <input type="hidden" name="currency_code" value="{{ setting.paypal_currency.value }}">
+                    <input type="hidden" name="no_shipping" value="1">
+                    <input type="hidden" name="custom" value="{{ auth.user.steamid }}">
+                    <input TYPE="hidden" NAME="return" value="{{ base_url() }}{{ current_path() }}">
+                  </form>
+                </div>
+                <input required maxlength="50" type="number" class="form-control border-custom" name="credits" id="creditsInput" placeholder="{{ 'credits_input_placeholder'|lang }}">
+                <div class="input-group-append">
+                  <span class="input-group-text border-custom">{{ setting.paypal_currency.value }}</span>
+                  <span class="input-group-text border-custom" id="creditsDollarValue">0</span>
+                </div>
+              </div>
+            </div>
+            <br>
+            <p>{{ 'tos_purchase_disclaimer'|lang }} <a href="{{ path_for('tos') }}">{{ 'tos'|lang }}</a></p>
+          {% else %}
+            <p>{{ 'sign_in_to_purchase_credits'|lang }}</p>
+          {% endif %}
+        </div>
+      </div>
+      <br><br><br>
+      <div class="row">
+        {% if top_purchases is not empty %}
+          <div class="col-12 col-md-6" data-aos="fade-right">
+            <h3 class="title">{{ 'top_donators'|lang }}</h3>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-custom">
+                <tbody>
+                  {% for purchase in top_purchases %}
+                    <tr>
+                      <td class="align-middle">
+                        <a href="{{ path_for('profile', { steamid: purchase.user.steamid }) }}">
+                          <img class="avism" src="{{ purchase.user.steam.avatarfull }}"></img>
+                          {{ purchase.user.name }}
+                        </a>
+                      </td>
+                      <td class="align-middle">
+                        <h5 class="title my-0">{{ purchase['SUM(cost)']|round(2) }} {{ setting.paypal_currency.value }}</h5>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% endif %}
+        {% if recent_purchases is not empty %}
+          <div class="col-12 col-md-6" data-aos="fade-left">
+            <h3 class="title">{{ 'recent_donations'|lang }}</h3>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-custom">
+                <tbody>
+                  {% for purchase in recent_purchases %}
+                  <tr>
+                    <td class="align-middle">
+                      <a href="{{ path_for('profile', { steamid: purchase.user.steamid }) }}">
+                        <img class="avism" src="{{ purchase.user.steam.avatarfull }}"></img>
+                        {{ purchase.user.name }}
+                      </a>
+                    </td>
+                    <td class="align-middle">
+                      <h5 class="title my-0">{{ purchase.cost|round(2) }} {{ setting.paypal_currency.value }}</h5>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <br>
+    </div>
+  </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> const minimum_purchase = {{ setting.minimum_purchase.value }}; </script>
+  <script src="/js/store.js?{{ script_version_hash }}"></script>
+{% endblock %}

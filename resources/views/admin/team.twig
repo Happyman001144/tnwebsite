@@ -1,0 +1,45 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Admin - Team{% endblock %}
+
+{% block settingscontent %}
+  {% verbatim %}
+    <form v-for="(card, index) in cards" onsubmit="submitForm(this); return false;" :action="save_url" method="post" class="col-10 offset-1 offset-md-0 col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="my-0 d-inline-block" data-toggle="tooltip" data-placement="right" :title="card.steamid"><i class="fab fa-steam mr-1"></i>{{card.user ? card.user.name: 'Unknown'}}</h5>
+          <h5 class="float-right"><i class="float-right cursor-pointer text-muted fas fa-arrows-alt"></i></h5>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <input type="hidden" name="type" value="staffMember">
+            <input type="hidden" name="steamid" :value="card.steamid">
+            <input type="hidden" name="order" :value="index+1">
+            <div class="form-group col-12">
+              <label for="nameoverride"><i class="fas fa-pen mr-1"></i>Name override</label>
+              <input maxlength="50" type="text" class="form-control" id="nameoverride" name="nameoverride" v-model="card.nameoverride">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label><i class="fas fa-server mr-1"></i>Server</label>
+              <server-select v-model="card.server" :servers="servers" :required="false"></server-select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="image"><i class="far fa-image mr-1"></i>Cover image URL</label>
+              <input maxlength="350" type="text" class="form-control" id="image" name="image" v-model="card.image">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-custom"><i class="fas fa-save mr-1"></i>Save</button>
+          <button type="button" @click="removeCard(card.steamid)" class="btn btn-outline-custom"><i class="fas fa-trash mr-1"></i>Remove</button>
+        </div>
+      </div>
+    </form>
+  {% endverbatim %}
+{% endblock %}
+
+{% block bodyscripts %}
+  <script> var cards = { data: {{ staffmembers|json_encode()|raw }}, type: 'staffMember', servers: {{ servers|json_encode()|raw }} } </script>
+{% endblock %}

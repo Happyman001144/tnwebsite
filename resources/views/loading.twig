@@ -1,0 +1,177 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Loading screen{% endblock %}
+
+{% block head %}
+    <style>
+      body {
+      	background: url("{{ loadingscreen.background ?? '/img/ember.jpg' }}") no-repeat center center fixed;
+        background-size: cover;
+				-moz-background-size: cover;
+				-webkit-background-size: cover;
+				-o-background-size: cover;
+        overflow: hidden;
+				background-color: #222222;
+      }
+
+			/* awesomium doesn't flex */
+			body {
+			  display: auto;
+			  min-height: auto;
+			}
+			.progress, .progress-bar {
+				display: block;
+				height: 16px;
+				width: 100%;
+			}
+			.row {
+				display: inline-block;
+			}
+			.col-4 {
+				float: left;
+			}
+
+			.profilecircle {
+				border: 0;
+			}
+
+			{% if setting.color_scheme.value != 'light' %}
+  			.card { /* awesomium fix */
+  			  background-color: #343a40 !important; /* gray-dark */
+  			}
+			{% endif %}
+    </style>
+{% endblock %}
+
+{% block content %}
+  <div class="loading-wrapper">
+   <div class="text-center">
+     <h1 class="title-main ci" data-aos="fade-down">
+       {% if setting.community_logo %}
+         <img style='max-width: 40%; max-height: 400px;' src='{{ setting.community_logo.value }}'></img>
+       {% else %}
+         {{ setting.community_name.value ?? 'Ember' }}
+       {% endif %}
+     </h1>
+     <div class="container">
+       <div class="row">
+         <div class="col-4" data-aos="fade-right">
+           <div class="card" style="width: 18rem;">
+             <div class="card-img-caption">
+               <img class="profilecircle" src="{{ user.steam.avatarfull }}">
+               <span class="card-img-top">
+                 <img  alt="">
+                 <img {{ not loadingscreen.profile_cover ? 'class="blurred-profile"' }} src="{{ loadingscreen.profile_cover ? loadingscreen.profile_cover: user.steam.avatarfull }}">
+               </span>
+             </div>
+             <div class="card-body">
+               <div align="center">
+                 <h4 class="card-title" style="margin-bottom: 0;">Welcome, {{ user.steam.personaname }}!</h4>
+               </div>
+             </div>
+           </div>
+         </div>
+         <div class="col-4" data-aos="fade">
+           <div class="card" style="width: 18rem;">
+             <div class="card-img">
+               <img class="card-img-top" id="mappreview" src="https://image.gametracker.com/images/maps/160x120/garrysmod/cs_office.jpg">
+             </div>
+             <div class="card-body">
+               <div align="center">
+                 <h4 class="card-title mb-0">We're playing <span id="gamemode">TTT</span> in <span id="mapname">cs_office</span>.</h4>
+               </div>
+             </div>
+           </div>
+         </div>
+         <div class="col-4" data-aos="fade-left">
+           <div class="card text-center" style="width: 18rem;">
+             <div class="card-header">
+               <h3 class="my-0 font-weight-normal"><i class="fas fa-gavel mr-1"></i>Rules</h3>
+             </div>
+             <div class="card-body">
+               <p class="my-0">{{ loadingscreen.rules|raw }}</p>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+     <div class="container">
+       <div class="row">
+         <div class="col-12" data-aos="fade-up">
+           <div class="card text-center" style="width: 58rem;">
+             <div class="card-header">
+               <h3 class="my-0 font-weight-normal"><span id="dlstatus">Retrieving server info...</span></h3>
+             </div>
+             <div class="card-body mb-0 pt-0">
+               <p class="my-2"><i class="fas fa-download mr-1"></i><span id="curfilename">No files downloading</span></p>
+               <div class="progress">
+                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progressbar" style="width: 100%"></div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+{% endblock %}
+
+{% block bodyscripts %}
+  <script>
+    function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+      if (gamemode == "darkrp") {
+        gamemode = "DarkRP";
+      } else if (gamemode == "sandbox") {
+        gamemode = "Sandbox";
+      } else if (gamemode == "terrortown") {
+        gamemode = "TTT";
+      }
+      document.getElementById("gamemode").innerHTML = gamemode;
+      document.getElementById("mapname").innerHTML = mapname;
+      document.getElementById("mappreview").src = "http://image.gametracker.com/images/maps/160x120/garrysmod/"+mapname+".jpg";
+    }
+
+    var totalFiles, neededFiles;
+
+    function SetStatusChanged(status) {
+      document.getElementById("dlstatus").innerHTML = status;
+      if (status === 'Sending client info...') {
+          SetFilesNeeded(0);
+          UpdateLoadingPercentage(0,0);
+      }
+    }
+
+    function DownloadingFile(fileName) {
+      document.getElementById("curfilename").innerHTML = " " + fileName;
+      UpdateLoadingPercentage(parseInt(totalFiles), parseInt(neededFiles));
+    }
+
+    function SetFilesTotal(total) {
+      totalFiles = total;
+    }
+
+    function SetFilesNeeded(needed) {
+      neededFiles = needed;
+    }
+
+    function UpdateLoadingPercentage(total, needed) {
+      var percentage = 100 - (Math.round((needed / total) * 100));
+      document.getElementById("progressbar").style.width = percentage + "%";
+    }
+
+    //GameDetails('','','rp_downtown','1','2421','darkrp')
+
+    $(window).resize(function(){
+      $('body').css({
+       position:"relative",
+       left: ($(window).width()
+       - $('body').outerWidth())/2,
+       top: ($(window).height()
+       - $('body').outerHeight())/2
+      });
+    });
+    $(function() {
+      $(window).resize();
+    });
+  </script>
+{% endblock %}
